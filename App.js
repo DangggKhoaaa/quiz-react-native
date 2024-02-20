@@ -1,20 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import HomeScreen from "./home/HomeScreen";
+import LoginScreen from "./home/LoginScreen";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SignupScreen from "./home/SignupScreen";
+import ClassName from "./home/ClassName";
+import Subject from "./home/Subject";
+import Quiz from "./home/Quiz";
+import Question from "./home/Question";
+import CreateQuestion from './home/CreateQuestion';
+import RadioQuestion from './home/RadioQuestion';
+import MyDrawer from './home/MyDrawer';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{
+        headerShown: false
+      }}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="DrawerWrapper" component={MyDrawer} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Class" component={ClassName} />
+        <Stack.Screen name="Subject" component={Subject} />
+        <Stack.Screen name="Quiz" component={Quiz} />
+        <Stack.Screen name="Question" component={Question} />
+        <Stack.Screen name="CreateQuestion" component={CreateQuestion} />
+        <Stack.Screen name="RadioQuestion" component={RadioQuestion} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
