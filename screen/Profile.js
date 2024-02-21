@@ -25,7 +25,7 @@ const Profile = () => {
                     <Text style={styles.value}>{name}</Text>
                 </View>
                 <View style={styles.infoContainer}>
-                    <Text style={styles.label}>Lớp học: </Text>
+                    <Text style={styles.label}>Lớp: </Text>
                     <Text style={styles.value}>{className}</Text>
                 </View>
             </View>

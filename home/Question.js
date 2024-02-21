@@ -135,27 +135,19 @@ const Question = () => {
                 questions.length > 0 ?
                     <View>
                         <Text style={styles.title}>{data.content}</Text>
+                        <View style={styles.group}>
+                            <Icon name="user" size={30} color="blue" style={styles.icon} />
+                            <Text style={styles.title}>{name}</Text>
+                        </View>
                         {
                             submitted ?
-                                <View style={[styles.group, { justifyContent: "space-between" }]}>
-                                    <View style={styles.group}>
-                                        <Icon name="user" size={30} color="gray" style={styles.icon} />
-                                        <Text style={styles.title}>{name}</Text>
-                                    </View>
-                                    <View style={styles.group}>
-                                        <Text style={styles.title}>{"Điểm: " + score}</Text>
-                                    </View>
+                                <View style={styles.group}>
+                                    <Text style={styles.title}>{"Điểm: " + score}</Text>
                                 </View>
                                 :
-                                <View style={[styles.group, { justifyContent: "space-between" }]}>
-                                    <View style={styles.group}>
-                                        <Icon name="user" size={30} color="gray" style={styles.icon} />
-                                        <Text style={styles.title}>{name}</Text>
-                                    </View>
-                                    <View style={styles.group}>
-                                        <Icon name="rocket" size={30} color="gray" style={styles.icon} />
-                                        <Text style={styles.title}>{formatTime(seconds)}</Text>
-                                    </View>
+                                <View style={styles.group}>
+                                    <Icon name="clock-o" size={30} color="red" style={styles.icon} />
+                                    <Text style={styles.title}>{"Thời gian: " + formatTime(seconds)}</Text>
                                 </View>
                         }
                     </View>

@@ -1,4 +1,4 @@
-const IP = "http://192.168.1.78:8080/";
+const IP = "http://192.168.1.59:8080/";
 export const API_CLASS = IP + "api/client/classes";
 export const API_SUBJECT = IP + "api/client/subjects/";
 export const API_QUIZ = IP + "api/client/quizzes/";
