@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import * as yup from 'yup';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-import { API_CREATE_QUESTION } from '../service/QuizService';
+import { API_CREATE_QUESTION_CHECKBOX } from '../service/QuizService';
 
 const validationSchema = yup.object().shape({
     question: yup.string().required('Vui lòng nhập câu hỏi'),
@@ -16,18 +16,17 @@ const validationSchema = yup.object().shape({
     )
 });
 
-const RadioQuestion = () => {
+const CheckboxQuestion = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(true);
     const id = route.params.data.id;
     const token = route.params.token;
-
-    // console.log(route.params);
+    const numCorrectAnswers = route.params.numCorrectAnswers;
 
     const handleSubmit = (values) => {
         setIsLoading(false);
-        axios.post(API_CREATE_QUESTION + id, values, {
+        axios.post(API_CREATE_QUESTION_CHECKBOX + id, values, {
             headers: {
                 'Authorization': "Bearer " + token,
                 'Content-Type': 'application/json',
@@ -80,7 +79,8 @@ const RadioQuestion = () => {
                         ],
                         question: '',
                         type: route.params?.type || '',
-                        creator: route.params?.name
+                        creator: route.params?.name,
+                        correctAnswerCount: numCorrectAnswers
                     }}
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
@@ -101,54 +101,38 @@ const RadioQuestion = () => {
                             </View>
                             {errors.question && <Text style={styles.errorText}>{errors.question}</Text>}
                             <Text style={[styles.title, { marginTop: 30 }]}>Câu trả lời</Text>
-                            <View style={styles.group}>
-                                <TextInput
-                                    placeholder='Nhập câu trả lời đúng tại đây'
-                                    style={styles.input}
-                                    onChangeText={handleChange('answers[0].content')}
-                                    value={values.answers[0].content}
-                                />
-                                <Icon name="check" size={30} color="green" style={styles.icon} />
-                            </View>
-                            {errors.answers && errors.answers[0] && errors.answers[0].content && (
-                                <Text style={styles.errorText}>{errors.answers[0].content}</Text>
-                            )}
-                            <View style={styles.group}>
-                                <TextInput
-                                    placeholder='Nhập câu trả lời sai tại đây'
-                                    style={styles.input}
-                                    onChangeText={handleChange('answers[1].content')}
-                                    value={values.answers[1].content}
-                                />
-                                <Icon name="close" size={30} color="red" style={styles.icon} />
-                            </View>
-                            {errors.answers && errors.answers[1] && errors.answers[1].content && (
-                                <Text style={styles.errorText}>{errors.answers[1].content}</Text>
-                            )}
-                            <View style={styles.group}>
-                                <TextInput
-                                    placeholder='Nhập câu trả lời sai tại đây'
-                                    style={styles.input}
-                                    onChangeText={handleChange('answers[2].content')}
-                                    value={values.answers[2].content}
-                                />
-                                <Icon name="close" size={30} color="red" style={styles.icon} />
-                            </View>
-                            {errors.answers && errors.answers[2] && errors.answers[2].content && (
-                                <Text style={styles.errorText}>{errors.answers[2].content}</Text>
-                            )}
-                            <View style={styles.group}>
-                                <TextInput
-                                    placeholder='Nhập câu trả lời sai tại đây'
-                                    style={styles.input}
-                                    onChangeText={handleChange('answers[3].content')}
-                                    value={values.answers[3].content}
-                                />
-                                <Icon name="close" size={30} color="red" style={styles.icon} />
-                            </View>
-                            {errors.answers && errors.answers[3] && errors.answers[3].content && (
-                                <Text style={styles.errorText}>{errors.answers[3].content}</Text>
-                            )}
+                            {Array.from({ length: numCorrectAnswers }, (_, index) => (
+                                <View key={index}>
+                                    <View style={styles.group}>
+                                        <TextInput
+                                            placeholder='Nhập câu trả lời đúng tại đây'
+                                            style={styles.input}
+                                            onChangeText={handleChange(`answers[${index}].content`)}
+                                            value={values.answers[index]?.content}
+                                        />
+                                        <Icon name="check" size={30} color="green" style={styles.icon} />
+                                    </View>
+                                    {errors.answers && errors.answers[index]?.content && (
+                                        <Text style={styles.errorText}>{errors.answers[index].content}</Text>
+                                    )}
+                                </View>
+                            ))}
+                            {Array.from({ length: 4 - numCorrectAnswers }, (_, index) => (
+                                <View key={index + parseInt(numCorrectAnswers)}>
+                                    <View style={styles.group} >
+                                        <TextInput
+                                            placeholder='Nhập câu trả lời sai tại đây'
+                                            style={styles.input}
+                                            onChangeText={handleChange(`answers[${index + parseInt(numCorrectAnswers)}].content`)}
+                                            value={values.answers[index + parseInt(numCorrectAnswers)]?.content}
+                                        />
+                                        <Icon name="close" size={30} color="red" style={styles.icon} />
+                                    </View>
+                                    {errors.answers && errors.answers[index + parseInt(numCorrectAnswers)] && errors.answers[index + parseInt(numCorrectAnswers)]?.content && (
+                                        <Text style={styles.errorText}>{errors.answers[index + parseInt(numCorrectAnswers)].content}</Text>
+                                    )}
+                                </View>
+                            ))}
                             <View style={styles.buttonGroup}>
                                 <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={!isLoading}>
                                     <Text style={styles.buttonText}>Tạo câu hỏi</Text>
@@ -217,4 +201,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RadioQuestion;
+export default CheckboxQuestion;

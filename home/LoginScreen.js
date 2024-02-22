@@ -92,12 +92,17 @@ const LoginScreen = () => {
                                 value={values.password}
                             />
                             <TouchableOpacity onPress={toggleShowPassword}>
-                                <Icon name="eye" size={30} color="gray" style={styles.icon} />
+                                {
+                                    showPassword ?
+                                        <Icon name="eye" size={25} color="gray" style={styles.icon} />
+                                        :
+                                        <Icon name="eye-slash" size={25} color="gray" style={styles.icon} />
+                                }
                             </TouchableOpacity>
                         </View>
                         {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                         <View style={styles.buttonGroup}>
-                            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                            <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={!isLoading}>
                                 <Text style={styles.buttonText}>Đăng nhập</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.button, { backgroundColor: 'red', flexDirection: 'row' }]}>
@@ -137,7 +142,7 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
     },
     icon: {
-        marginRight: 15,
+        marginRight: 10,
     },
     input: {
         flex: 1,

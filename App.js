@@ -11,6 +11,7 @@ import Question from "./home/Question";
 import CreateQuestion from './home/CreateQuestion';
 import RadioQuestion from './home/RadioQuestion';
 import MyDrawer from './home/MyDrawer';
+import CheckboxQuestion from './home/CheckboxQuestion';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function App() {
         <Stack.Screen name="Question" component={Question} />
         <Stack.Screen name="CreateQuestion" component={CreateQuestion} />
         <Stack.Screen name="RadioQuestion" component={RadioQuestion} />
+        <Stack.Screen name="CheckboxQuestion" component={CheckboxQuestion} />
       </Stack.Navigator>
     </NavigationContainer>
   );
