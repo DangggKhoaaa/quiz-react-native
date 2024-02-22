@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         justifyContent: 'space-evenly',
         paddingTop: 50,
+        paddingHorizontal: 15,
     },
     title: {
         fontSize: 22,
