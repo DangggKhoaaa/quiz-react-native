@@ -57,6 +57,9 @@ const CreateQuestion = () => {
     return (
         <View style={styles.container}>
             <View>
+                <Text style={styles.title}>Vui lòng chọn loại câu hỏi</Text>
+            </View>
+            <View>
                 <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('RadioQuestion', { type: "radio", data, token, name })}>
                     <Text style={styles.buttonText}>Câu hỏi có 1 đáp án đúng</Text>
                 </TouchableOpacity>
@@ -101,6 +104,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'space-evenly',
+    },
+    title: {
+        fontSize: 30,
+        textAlign: 'center',
     },
     paragraph: {
         color: 'red'

@@ -37,12 +37,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 16,
+        padding: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: 'bold',
-        marginBottom: 16,
+        marginBottom: 15,
     },
     infoContainer: {
         flexDirection: 'row',
@@ -51,9 +51,11 @@ const styles = StyleSheet.create({
     label: {
         fontWeight: 'bold',
         marginRight: 8,
+        fontSize: 20,
     },
     value: {
         flex: 1,
+        fontSize: 20,
     },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, StatusBar, StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
@@ -26,11 +26,8 @@ const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(true);
     const navigation = useNavigation();
 
-    // const handleLoginGG = () => {
-    //     axios.post(API_LOGIN_GG)
-    // };
-
     const handleSubmit = (values) => {
+        setIsLoading(false);
         axios.post(API_LOGIN, values)
             .then((e) => {
                 if (e.data.success) {
@@ -46,7 +43,9 @@ const LoginScreen = () => {
                     ], { textStyle: { fontSize: 30 } });
                 }
             }).catch(e => {
-                console.log(e);
+                Alert.alert('Thông báo', e.message, [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ], { textStyle: { fontSize: 30 } });
             }).finally(() =>
                 setIsLoading(true)
             );
@@ -62,57 +61,59 @@ const LoginScreen = () => {
             <View>
                 <Text style={styles.title}>Đăng Nhập</Text>
             </View>
-            <Formik
-                initialValues={{
-                    username: '',
-                    password: ''
-                }}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                {({ handleChange, handleSubmit, values, errors }) => (
-                    <View style={styles.form}>
-                        <View style={styles.group}>
-                            <Icon name="user" size={30} color="gray" style={styles.icon} />
-                            <TextInput
-                                placeholder='Tài khoản'
-                                style={styles.input}
-                                onChangeText={handleChange('username')}
-                                value={values.username}
-                            />
+            {!isLoading ? <ActivityIndicator size={100} /> :
+                <Formik
+                    initialValues={{
+                        username: '',
+                        password: ''
+                    }}
+                    validationSchema={validationSchema}
+                    onSubmit={handleSubmit}
+                >
+                    {({ handleChange, handleSubmit, values, errors }) => (
+                        <View style={styles.form}>
+                            <View style={styles.group}>
+                                <Icon name="user" size={30} color="gray" style={styles.icon} />
+                                <TextInput
+                                    placeholder='Tài khoản'
+                                    style={styles.input}
+                                    onChangeText={handleChange('username')}
+                                    value={values.username}
+                                />
+                            </View>
+                            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+                            <View style={styles.group}>
+                                <Icon name="lock" size={30} color="gray" style={styles.icon} />
+                                <TextInput
+                                    placeholder='Mật khẩu'
+                                    style={styles.input}
+                                    secureTextEntry={showPassword}
+                                    onChangeText={handleChange('password')}
+                                    value={values.password}
+                                />
+                                <TouchableOpacity onPress={toggleShowPassword}>
+                                    {
+                                        showPassword ?
+                                            <Icon name="eye" size={25} color="gray" style={styles.icon} />
+                                            :
+                                            <Icon name="eye-slash" size={25} color="gray" style={styles.icon} />
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                            <View style={styles.buttonGroup}>
+                                <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={!isLoading}>
+                                    <Text style={styles.buttonText}>Đăng nhập</Text>
+                                </TouchableOpacity>
+                                {/* <TouchableOpacity style={[styles.button, { backgroundColor: 'red', flexDirection: 'row' }]}>
+                            <Icon name="google" size={30} color="white" style={styles.icon} />
+                            <Text style={styles.buttonText}>Google</Text>
+                        </TouchableOpacity> */}
+                            </View>
                         </View>
-                        {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
-                        <View style={styles.group}>
-                            <Icon name="lock" size={30} color="gray" style={styles.icon} />
-                            <TextInput
-                                placeholder='Mật khẩu'
-                                style={styles.input}
-                                secureTextEntry={showPassword}
-                                onChangeText={handleChange('password')}
-                                value={values.password}
-                            />
-                            <TouchableOpacity onPress={toggleShowPassword}>
-                                {
-                                    showPassword ?
-                                        <Icon name="eye" size={25} color="gray" style={styles.icon} />
-                                        :
-                                        <Icon name="eye-slash" size={25} color="gray" style={styles.icon} />
-                                }
-                            </TouchableOpacity>
-                        </View>
-                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-                        <View style={styles.buttonGroup}>
-                            <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={!isLoading}>
-                                <Text style={styles.buttonText}>Đăng nhập</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={[styles.button, { backgroundColor: 'red', flexDirection: 'row' }]}>
-                                <Icon name="google" size={30} color="white" style={styles.icon} />
-                                <Text style={styles.buttonText}>Google</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                )}
-            </Formik>
+                    )}
+                </Formik>
+            }
         </SafeAreaView>
     );
 };

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StatusBar, StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StatusBar, StyleSheet, View, Text, TextInput, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { Formik } from 'formik';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as yup from 'yup';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { API_CREATE_QUESTION_CHECKBOX } from '../service/QuizService';
+import XLSX from 'xlsx';
+import * as FileSystem from 'expo-file-system';
+import * as DocumentPicker from 'expo-document-picker';
 
 const validationSchema = yup.object().shape({
     question: yup.string().required('Vui lòng nhập câu hỏi'),
@@ -19,10 +22,24 @@ const validationSchema = yup.object().shape({
 const CheckboxQuestion = () => {
     const route = useRoute();
     const navigation = useNavigation();
-    const [isLoading, setIsLoading] = useState(true);
     const id = route.params.data.id;
     const token = route.params.token;
     const numCorrectAnswers = route.params.numCorrectAnswers;
+    const [isLoading, setIsLoading] = useState(true);
+    const [row, setRow] = useState(0);
+    const [prevName, setPrevName] = useState('');
+    const [formData, setFormData] = useState({
+        answers: [
+            { content: '' },
+            { content: '' },
+            { content: '' },
+            { content: '' }
+        ],
+        question: '',
+        type: route.params?.type || '',
+        creator: route.params?.name,
+        correctAnswerCount: numCorrectAnswers
+    });
 
     const handleSubmit = (values) => {
         setIsLoading(false);
@@ -47,9 +64,9 @@ const CheckboxQuestion = () => {
                             },
                         },
                         {
-                            text: 'Trở lại',
+                            text: 'Trang chủ',
                             onPress: () => {
-                                navigation.navigate('CreateQuestion');
+                                navigation.navigate('DrawerWrapper');
                             },
                         },
                     ],
@@ -64,84 +81,156 @@ const CheckboxQuestion = () => {
             .finally(() => setIsLoading(true));
     };
 
+    const readExcelData = async (fileUri, index) => {
+        try {
+            if (!fileUri) {
+                Alert.alert('Thông báo', 'Đường dẫn tệp Excel không hợp lệ.', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ], { textStyle: { fontSize: 30 } });
+                return;
+            }
+
+            if (!fileUri.endsWith('.xlsx')) {
+                Alert.alert('Thông báo', 'Định dạng tệp không được hỗ trợ. Vui lòng chọn một tệp excel', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ], { textStyle: { fontSize: 30 } });
+                return;
+            }
+
+            const content = await FileSystem.readAsStringAsync(fileUri, {
+                encoding: FileSystem.EncodingType.Base64,
+            });
+
+            const workbook = XLSX.read(content, { type: 'base64' });
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const question = data[index][0];
+            const answers = data[index].slice(1, 5);
+
+            setFormData({
+                ...formData,
+                question: String(question),
+                answers: [
+                    { content: String(answers[0]) },
+                    { content: String(answers[1]) },
+                    { content: String(answers[2]) },
+                    { content: String(answers[3]) },
+                ],
+            });
+        } catch (error) {
+            Alert.alert('Lỗi khi đọc tệp Excel', error.message, [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ], { textStyle: { fontSize: 30 } });
+        }
+    };
+
+    const handleFilePick = async () => {
+        try {
+            const res = await DocumentPicker.getDocumentAsync({
+                copyToCacheDirectory: true,
+                multiple: false,
+            });
+            if (!res.canceled) {
+                let newRow;
+                if (res.assets[0].name.localeCompare(prevName) === 0) {
+                    newRow = row + 1;
+                    setRow(newRow);
+                } else {
+                    newRow = 0;
+                    setRow(newRow);
+                    setPrevName(res.assets[0].name);
+                }
+                readExcelData(res.assets[0].uri, newRow);
+            } else {
+                Alert.alert('Thông báo', 'Không chọn file', [
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                ], { textStyle: { fontSize: 30 } });
+            }
+        } catch (error) {
+            Alert.alert('Lỗi khi chọn file', error.message, [
+                { text: 'OK', onPress: () => console.log('OK Pressed') },
+            ], { textStyle: { fontSize: 30 } });
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#ffff" barStyle="dark-content" />
             <Text style={[styles.title, { color: 'red' }]}>Vui lòng nhập câu hỏi, câu trả lời theo hướng dẫn</Text>
-            <ScrollView>
-                <Formik
-                    initialValues={{
-                        answers: [
-                            { content: '' },
-                            { content: '' },
-                            { content: '' },
-                            { content: '' }
-                        ],
-                        question: '',
-                        type: route.params?.type || '',
-                        creator: route.params?.name,
-                        correctAnswerCount: numCorrectAnswers
-                    }}
-                    validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
-                // validateOnChange={false}
-                // validateOnBlur={false}
-                >
-                    {({ handleChange, handleSubmit, values, errors }) => (
-                        <View style={styles.form}>
-                            <Text style={styles.title}>Câu hỏi</Text>
-                            <View style={styles.group}>
-                                <TextInput
-                                    placeholder='Nhập câu hỏi tại đây'
-                                    style={styles.input}
-                                    onChangeText={handleChange('question')}
-                                    value={values.question}
-                                />
-                                <Icon name="question" size={30} color="blue" style={styles.icon} />
-                            </View>
-                            {errors.question && <Text style={styles.errorText}>{errors.question}</Text>}
-                            <Text style={[styles.title, { marginTop: 30 }]}>Câu trả lời</Text>
-                            {Array.from({ length: numCorrectAnswers }, (_, index) => (
-                                <View key={index}>
-                                    <View style={styles.group}>
-                                        <TextInput
-                                            placeholder='Nhập câu trả lời đúng tại đây'
-                                            style={styles.input}
-                                            onChangeText={handleChange(`answers[${index}].content`)}
-                                            value={values.answers[index]?.content}
-                                        />
-                                        <Icon name="check" size={30} color="green" style={styles.icon} />
+            <View style={[styles.buttonGroup, { alignItems: 'flex-end', marginRight: "5%" }]}>
+                <TouchableOpacity style={[styles.button, { backgroundColor: "green" }]} onPress={handleFilePick}>
+                    <Text><Icon name="file-excel-o" size={25} color="#fff" style={styles.icon} /></Text>
+                </TouchableOpacity>
+            </View>
+            {
+                !isLoading ? <ActivityIndicator size={100} /> :
+                    <ScrollView>
+                        <Formik
+                            initialValues={formData}
+                            validationSchema={validationSchema}
+                            onSubmit={handleSubmit}
+                        >
+                            {({ handleChange, handleSubmit, values, errors, setValues }) => {
+                                useEffect(() => {
+                                    setValues(formData)
+                                }, [formData])
+                                return (
+                                    <View style={styles.form}>
+                                        <Text style={styles.title}>Câu hỏi</Text>
+                                        <View style={styles.group}>
+                                            <TextInput
+                                                placeholder='Nhập câu hỏi tại đây'
+                                                style={styles.input}
+                                                onChangeText={handleChange('question')}
+                                                value={values.question}
+                                            />
+                                            <Icon name="question" size={30} color="blue" style={styles.icon} />
+                                        </View>
+                                        {errors.question && <Text style={styles.errorText}>{errors.question}</Text>}
+                                        <Text style={[styles.title, { marginTop: 30 }]}>Câu trả lời</Text>
+                                        {Array.from({ length: numCorrectAnswers }, (_, index) => (
+                                            <View key={index}>
+                                                <View style={styles.group}>
+                                                    <TextInput
+                                                        placeholder='Nhập câu trả lời đúng tại đây'
+                                                        style={styles.input}
+                                                        onChangeText={handleChange(`answers[${index}].content`)}
+                                                        value={values.answers[index]?.content}
+                                                    />
+                                                    <Icon name="check" size={30} color="green" style={styles.icon} />
+                                                </View>
+                                                {errors.answers && errors.answers[index]?.content && (
+                                                    <Text style={styles.errorText}>{errors.answers[index].content}</Text>
+                                                )}
+                                            </View>
+                                        ))}
+                                        {Array.from({ length: 4 - numCorrectAnswers }, (_, index) => (
+                                            <View key={index + parseInt(numCorrectAnswers)}>
+                                                <View style={styles.group} >
+                                                    <TextInput
+                                                        placeholder='Nhập câu trả lời sai tại đây'
+                                                        style={styles.input}
+                                                        onChangeText={handleChange(`answers[${index + parseInt(numCorrectAnswers)}].content`)}
+                                                        value={values.answers[index + parseInt(numCorrectAnswers)]?.content}
+                                                    />
+                                                    <Icon name="close" size={30} color="red" style={styles.icon} />
+                                                </View>
+                                                {errors.answers && errors.answers[index + parseInt(numCorrectAnswers)] && errors.answers[index + parseInt(numCorrectAnswers)]?.content && (
+                                                    <Text style={styles.errorText}>{errors.answers[index + parseInt(numCorrectAnswers)].content}</Text>
+                                                )}
+                                            </View>
+                                        ))}
+                                        <View style={styles.buttonGroup}>
+                                            <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={!isLoading}>
+                                                <Text style={styles.buttonText}>Tạo câu hỏi</Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
-                                    {errors.answers && errors.answers[index]?.content && (
-                                        <Text style={styles.errorText}>{errors.answers[index].content}</Text>
-                                    )}
-                                </View>
-                            ))}
-                            {Array.from({ length: 4 - numCorrectAnswers }, (_, index) => (
-                                <View key={index + parseInt(numCorrectAnswers)}>
-                                    <View style={styles.group} >
-                                        <TextInput
-                                            placeholder='Nhập câu trả lời sai tại đây'
-                                            style={styles.input}
-                                            onChangeText={handleChange(`answers[${index + parseInt(numCorrectAnswers)}].content`)}
-                                            value={values.answers[index + parseInt(numCorrectAnswers)]?.content}
-                                        />
-                                        <Icon name="close" size={30} color="red" style={styles.icon} />
-                                    </View>
-                                    {errors.answers && errors.answers[index + parseInt(numCorrectAnswers)] && errors.answers[index + parseInt(numCorrectAnswers)]?.content && (
-                                        <Text style={styles.errorText}>{errors.answers[index + parseInt(numCorrectAnswers)].content}</Text>
-                                    )}
-                                </View>
-                            ))}
-                            <View style={styles.buttonGroup}>
-                                <TouchableOpacity style={styles.button} onPress={handleSubmit} disabled={!isLoading}>
-                                    <Text style={styles.buttonText}>Tạo câu hỏi</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    )}
-                </Formik>
-            </ScrollView>
+                                )
+                            }}
+                        </Formik>
+                    </ScrollView>
+            }
         </SafeAreaView>
     );
 };
@@ -150,7 +239,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        justifyContent: 'space-evenly',
         paddingTop: 50,
         paddingHorizontal: 15,
     },
