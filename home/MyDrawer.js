@@ -32,7 +32,7 @@ const MyDrawer = () => {
                         label="Đổi mật khẩu"
                         onPress={() => props.navigation.navigate('Đổi mật khẩu')}
                         icon={() => (
-                            <Icon name="cog" size={25} color="gray" />
+                            <Icon name="key" size={25} color="gray" />
                         )}
                     />
                     <DrawerItem

@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import axios from 'axios';
-import { API_LOGIN, API_LOGIN_GG } from '../service/QuizService';
+import { API_LOGIN } from '../service/QuizService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const validationSchema = yup.object().shape({
@@ -25,6 +25,7 @@ const LoginScreen = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showPassword, setShowPassword] = useState(true);
     const navigation = useNavigation();
+    // const updatedAPIUrls = getUpdatedAPIUrls();
 
     const handleSubmit = (values) => {
         setIsLoading(false);

@@ -31,6 +31,7 @@ const ChangePassword = () => {
     const [showNewPassword, setShowNewPassword] = useState(true);
     const [token, setToken] = useState("");
     const navigation = useNavigation();
+    // const updatedAPIUrls = getUpdatedAPIUrls();
 
     useEffect(() => {
         AsyncStorage.getItem("token").then(e => {

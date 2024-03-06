@@ -26,6 +26,7 @@ const SignupScreen = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showPassword, setShowPassword] = useState(true);
     const navigation = useNavigation();
+    // const updatedAPIUrls = getUpdatedAPIUrls();
 
     const handleSubmit = (values) => {
         setIsLoading(false);

@@ -21,6 +21,7 @@ const Question = () => {
     const route = useRoute();
     const navigation = useNavigation();
     const data = route.params?.data;
+    // const updatedAPIUrls = getUpdatedAPIUrls();
 
     const handlePress = (questionId, answerId) => {
         if (submitted) {
@@ -111,7 +112,9 @@ const Question = () => {
                     }
                 })
                 .catch(error => {
-                    console.log(error.message);
+                    Alert.alert('Thông báo', error.message, [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ], { textStyle: { fontSize: 30 } });
                 })
                 .finally(() => {
                     setSeconds(-1);
@@ -127,7 +130,7 @@ const Question = () => {
         setSubmitted(false);
         setShowAlert(false);
         getAllQuestion();
-    }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -196,16 +199,26 @@ const Question = () => {
                         keyExtractor={question => question.id}
                         ListFooterComponent={() => (
                             questions.length > 0 ?
-                                <View style={styles.buttonGroup}>
+                                <View>
                                     {
                                         submitted ?
-                                            <TouchableOpacity style={styles.button} onPress={handleRetry}>
-                                                <Text style={styles.buttonText}>Làm lại</Text>
-                                            </TouchableOpacity>
+                                            <View style={styles.buttonGroup}>
+                                                <TouchableOpacity style={styles.button} onPress={handleRetry}>
+                                                    <Icon name="repeat" size={25} color="#fff" style={[styles.icon, { marginBottom: 0 }]} />
+                                                    <Text style={styles.buttonText}>Làm lại</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('DrawerWrapper')}>
+                                                    <Icon name="home" size={25} color="#fff" style={[styles.icon, { marginBottom: 0 }]} />
+                                                    <Text style={styles.buttonText}>Trang chủ</Text>
+                                                </TouchableOpacity>
+                                            </View>
                                             :
-                                            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                                                <Text style={styles.buttonText}>Nộp bài</Text>
-                                            </TouchableOpacity>
+                                            <View style={styles.buttonGroup}>
+                                                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                                                    <Icon name="send" size={25} color="#fff" style={[styles.icon, { marginBottom: 0 }]} />
+                                                    <Text style={styles.buttonText}>Nộp bài</Text>
+                                                </TouchableOpacity>
+                                            </View>
                                     }
                                 </View>
                                 :
@@ -246,10 +259,15 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     buttonGroup: {
-        margin: 10,
+        flex: 1,
+        justifyContent: "space-around",
+        flexDirection: "row",
+        margin: 20,
         alignItems: 'center',
     },
     button: {
+        flexDirection: "row",
+        alignItems: 'center',
         backgroundColor: '#007bff',
         paddingVertical: 10,
         paddingHorizontal: 20,

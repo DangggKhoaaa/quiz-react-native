@@ -15,6 +15,7 @@ const Subject = () => {
     const [isLoading, setIsLoading] = useState(true);
     const route = useRoute();
     const navigation = useNavigation();
+    // const updatedAPIUrls = getUpdatedAPIUrls();
 
     const data = route.params?.data;
 

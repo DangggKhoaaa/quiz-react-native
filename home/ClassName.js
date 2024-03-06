@@ -14,6 +14,7 @@ const ClassName = () => {
     const [isLoading, setIsLoading] = useState(true);
     const navigation = useNavigation();
     const route = useRoute();
+    // const updatedAPIUrls = getUpdatedAPIUrls();
 
     useEffect(() => {
         AsyncStorage.getItem("name").then(e => {

@@ -22,6 +22,7 @@ const validationSchema = yup.object().shape({
 const CheckboxQuestion = () => {
     const route = useRoute();
     const navigation = useNavigation();
+    // const updatedAPIUrls = getUpdatedAPIUrls();
     const id = route.params.data.id;
     const token = route.params.token;
     const numCorrectAnswers = route.params.numCorrectAnswers;
