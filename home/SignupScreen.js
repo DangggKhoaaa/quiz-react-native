@@ -8,8 +8,11 @@ import * as yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 
 const validationSchema = yup.object().shape({
+    school: yup.string().required('Vui lòng nhập tên trường'),
     name: yup.string().required('Vui lòng nhập họ và tên'),
-    className: yup.string().required('Vui lòng nhập lớp'),
+    className: yup.string()
+        .required('Vui lòng nhập lớp')
+        .matches(/^(1[0-2]|[1-9])$/, 'Lớp phải là số từ 1 đến 12'),
     username: yup.string()
         .required('Vui lòng nhập tài khoản')
         .matches(/^\S*$/, 'Tài khoản không được chứa ký tự trắng')
@@ -68,6 +71,7 @@ const SignupScreen = () => {
                 !isLoading ? <ActivityIndicator size={100} /> :
                     <Formik
                         initialValues={{
+                            school: '',
                             name: '',
                             className: '',
                             username: '',
@@ -78,7 +82,17 @@ const SignupScreen = () => {
                         {({ handleChange, handleSubmit, values, errors }) => (
                             <View style={styles.form}>
                                 <View style={styles.group}>
-                                    <Icon name="user-secret" size={30} color="gray" style={styles.icon} />
+                                    <Icon name="university" size={30} color="gray" style={styles.icon} />
+                                    <TextInput
+                                        placeholder='Trường'
+                                        style={styles.input}
+                                        onChangeText={handleChange('school')}
+                                        value={values.school}
+                                    />
+                                </View>
+                                {errors.school && <Text style={styles.errorText}>{errors.school}</Text>}
+                                <View style={styles.group}>
+                                    <Icon name="mortar-board" size={28} color="gray" style={styles.icon} />
                                     <TextInput
                                         placeholder='Họ và tên'
                                         style={styles.input}
@@ -186,7 +200,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 30,
-        width: "65%"
     },
     buttonText: {
         color: '#fff',

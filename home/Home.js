@@ -8,10 +8,14 @@ const Home = () => {
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
     const [token, setToken] = useState("");
+    const [className, setClassName] = useState("");
 
     useEffect(() => {
         AsyncStorage.getItem("name").then(e => {
             setName(e)
+        });
+        AsyncStorage.getItem("className").then(e => {
+            setClassName(e)
         });
         AsyncStorage.getItem("role").then(e => {
             setRole(e)

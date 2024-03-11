@@ -7,11 +7,11 @@ import SignupScreen from "./home/SignupScreen";
 import ClassName from "./home/ClassName";
 import Subject from "./home/Subject";
 import Quiz from "./home/Quiz";
-import Question from "./home/Question";
 import CreateQuestion from './home/CreateQuestion';
 import RadioQuestion from './home/RadioQuestion';
 import MyDrawer from './home/MyDrawer';
 import CheckboxQuestion from './home/CheckboxQuestion';
+import Chapter from './home/Chapter';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,8 +27,8 @@ export default function App() {
         <Stack.Screen name="Signup" component={SignupScreen} />
         <Stack.Screen name="Class" component={ClassName} />
         <Stack.Screen name="Subject" component={Subject} />
+        <Stack.Screen name="Chapter" component={Chapter} />
         <Stack.Screen name="Quiz" component={Quiz} />
-        <Stack.Screen name="Question" component={Question} />
         <Stack.Screen name="CreateQuestion" component={CreateQuestion} />
         <Stack.Screen name="RadioQuestion" component={RadioQuestion} />
         <Stack.Screen name="CheckboxQuestion" component={CheckboxQuestion} />

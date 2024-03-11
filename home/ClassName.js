@@ -9,6 +9,7 @@ const ClassName = () => {
     const [classList, setClassList] = useState([]);
     const [error, setError] = useState("");
     const [name, setName] = useState("");
+    const [className, setClassName] = useState("");
     const [role, setRole] = useState("");
     const [token, setToken] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +20,9 @@ const ClassName = () => {
     useEffect(() => {
         AsyncStorage.getItem("name").then(e => {
             setName(e)
+        });
+        AsyncStorage.getItem("className").then(e => {
+            setClassName(e)
         });
         AsyncStorage.getItem("role").then(e => {
             setRole(e)

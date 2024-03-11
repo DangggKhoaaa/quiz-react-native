@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     form: {
-        marginBottom: 50
+        marginTop: 20
     },
     group: {
         marginTop: 20,

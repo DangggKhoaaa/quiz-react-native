@@ -32,8 +32,9 @@ const LoginScreen = () => {
         axios.post(API_LOGIN, values)
             .then((e) => {
                 if (e.data.success) {
-                    AsyncStorage.setItem('name', e.data.userDetail.name || "");
                     AsyncStorage.setItem('role', e.data.userDetail.role || "");
+                    AsyncStorage.setItem('name', e.data.userDetail.name || "");
+                    AsyncStorage.setItem('school', e.data.userDetail.school || "");
                     AsyncStorage.setItem('className', e.data.userDetail.className || "");
                     AsyncStorage.setItem('username', e.data.userDetail.username || "");
                     AsyncStorage.setItem('token', e.data.userDetail.token || "");
@@ -160,11 +161,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     button: {
+        alignItems: 'center',
         backgroundColor: '#007bff',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 10,
-        marginTop: 30,
+        borderRadius: 5,
+        marginTop: 30
     },
     buttonText: {
         color: '#fff',

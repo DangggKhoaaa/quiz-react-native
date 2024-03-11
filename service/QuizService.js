@@ -1,8 +1,21 @@
 import Constants from 'expo-constants';
 import * as Network from 'expo-network';
 import * as Linking from 'expo-linking';
+import NetInfo from '@react-native-community/netinfo';
 
-const IP = "http://192.168.1.43:8080/";
+// const getIPAddress = async () => {
+//     const ipAddres = await Network.getNetworkStateAsync();
+//     console.log(ipAddres);
+//     return ipAddres;
+// };
+
+// getIPAddress();
+
+// NetInfo.fetch().then((state) => {
+//     console.log('IP Address:', state.details.ipAddress);
+// });
+
+const IP = "http://192.168.1.45:8080/";
 export const API_CLASS = IP + "api/client/classes";
 export const API_SUBJECT = IP + "api/client/subjects/";
 export const API_QUIZ = IP + "api/client/quizzes/";
@@ -12,7 +25,6 @@ export const API_CREATE_QUESTION_CHECKBOX = IP + "api/admin/questions/checkbox/"
 export const API_SCORE = IP + "api/client/userQuiz";
 export const API_REGISTER = IP + "api/auth/register";
 export const API_LOGIN = IP + "api/auth/login";
-export const API_LOGIN_GG = IP + "api/auth/loginGoogle";
 export const API_CHANGE_PASSWORD = IP + "api/auth/changePassword";
 
 // const getIPAddress = () => {
@@ -28,12 +40,6 @@ export const API_CHANGE_PASSWORD = IP + "api/auth/changePassword";
 // const getIPAddress = () => {
 //     const ipAddres = Constants.experienceUrl;
 //     const ipAddress = Linking.openURL(ipAddres);
-//     console.log(ipAddress);
-//     return ipAddress;
-// };
-
-// const getIPAddress = async () => {
-//     const ipAddress = await Network.getIpAddressAsync()
 //     console.log(ipAddress);
 //     return ipAddress;
 // };

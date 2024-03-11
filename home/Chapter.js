@@ -2,23 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
-import { API_SUBJECT } from '../service/QuizService';
+import { API_QUIZ } from '../service/QuizService';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Subject = () => {
-    const [subjects, setSubjects] = useState([]);
+const Chapter = () => {
+    const [quizzes, setQuizzes] = useState([]);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState("");
     const [className, setClassName] = useState("");
     const [role, setRole] = useState("");
     const [token, setToken] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
     const route = useRoute();
     const navigation = useNavigation();
     // const updatedAPIUrls = getUpdatedAPIUrls();
 
     const data = route.params?.data;
+
+    useEffect(() => {
+        axios(API_QUIZ + data.id)
+            .then(e => {
+                setQuizzes(e.data)
+            }).catch(e =>
+                setError(e.message)
+            ).finally(() =>
+                setIsLoading(false)
+            );
+    }, [data.id]);
 
     useEffect(() => {
         AsyncStorage.getItem("name").then(e => {
@@ -35,28 +46,21 @@ const Subject = () => {
         });
     }, []);
 
-    useEffect(() => {
-        axios(API_SUBJECT + data.id)
-            .then(e => {
-                setSubjects(e.data)
-            }).catch(e =>
-                setError(e.message)
-            ).finally(() =>
-                setIsLoading(false)
-            );
-    }, [data.id]);
-
-    const handleSubjectId = (data) => {
-        navigation.navigate('Chapter', { data });
+    const handleQuizId = (data) => {
+        if (role === "ROLE_ADMIN") {
+            navigation.navigate('CreateQuestion', { data })
+        } else {
+            navigation.navigate('Quiz', { data })
+        }
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar backgroundColor="#ffff" barStyle="dark-content" />
             {
-                subjects.length > 0 ?
+                quizzes.length > 0 ?
                     <View>
-                        <Text style={styles.title}>Vui lòng chọn môn học</Text>
+                        <Text style={styles.title}>Vui lòng chọn chương</Text>
                     </View>
                     :
                     <View>
@@ -66,11 +70,11 @@ const Subject = () => {
             {
                 isLoading ? <ActivityIndicator size={100} /> :
                     <FlatList
-                        data={subjects}
+                        data={quizzes}
                         renderItem={({ item }) =>
                             <View style={styles.buttonGroup}>
-                                <TouchableOpacity key={item.id} style={styles.button} onPress={() => handleSubjectId(item)}>
-                                    <Text style={styles.buttonText}>{item.subjectName + " " + data.className}</Text>
+                                <TouchableOpacity key={item.id} style={styles.button} onPress={() => handleQuizId(item)}>
+                                    <Text style={styles.buttonText}>{data.subjectName + " - " + item.content}</Text>
                                 </TouchableOpacity>
                             </View>
                         }
@@ -102,7 +106,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 5,
         marginTop: 30,
-        width: 170
+        width: 220
     },
     buttonText: {
         color: '#fff',
@@ -112,4 +116,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Subject;
+export default Chapter;

@@ -26,7 +26,7 @@ const RadioQuestion = () => {
     const id = route.params.data.id;
     const token = route.params.token;
     const [isLoading, setIsLoading] = useState(true);
-    const [row, setRow] = useState(0);
+    const [row, setRow] = useState(1);
     const [prevName, setPrevName] = useState('');
     const [formData, setFormData] = useState({
         answers: [
@@ -138,7 +138,7 @@ const RadioQuestion = () => {
                     newRow = row + 1;
                     setRow(newRow);
                 } else {
-                    newRow = 0;
+                    newRow = 1;
                     setRow(newRow);
                     setPrevName(res.assets[0].name);
                 }
@@ -260,14 +260,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         paddingTop: 50,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
     },
     title: {
         fontSize: 25,
         textAlign: 'center',
     },
     form: {
-        marginBottom: 30
+        marginTop: 20
     },
     group: {
         marginTop: 20,
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
         marginLeft: 35,
     },
     buttonGroup: {
-        marginTop: 30,
+        marginTop: 20,
         alignItems: 'center',
     },
     button: {

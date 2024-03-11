@@ -2,12 +2,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StatusBar, StyleSheet, View, Text } from 'react-native';
 
-
 const Profile = () => {
+    const [school, setSchool] = useState("");
     const [name, setName] = useState("");
     const [className, setClassName] = useState("");
 
     useEffect(() => {
+        AsyncStorage.getItem("school").then(e => {
+            setSchool(e)
+        });
         AsyncStorage.getItem("name").then(e => {
             setName(e)
         });
@@ -20,6 +23,10 @@ const Profile = () => {
             <StatusBar backgroundColor="#ffff" barStyle="dark-content" />
             <View>
                 <Text style={styles.title}>Thông tin cá nhân</Text>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.label}>Trường: </Text>
+                    <Text style={styles.value}>{school}</Text>
+                </View>
                 <View style={styles.infoContainer}>
                     <Text style={styles.label}>Tên: </Text>
                     <Text style={styles.value}>{name}</Text>

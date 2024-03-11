@@ -7,7 +7,7 @@ const LogoutScreen = () => {
     const navigation = useNavigation();
     const handleLogout = async () => {
         await AsyncStorage.clear();
-        navigation.navigate('Login');
+        navigation.navigate('Home');
     };
     return (
         <SafeAreaView style={styles.container}>
